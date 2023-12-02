@@ -5,11 +5,11 @@ const moment = require('moment');
 
 const expenseValidationSchema = Joi.object({
   expenseType: Joi.string().required(),
-  // date: Joi.string().required(),
-  // expenseRefNo: Joi.string().required(),
-  // particulars: Joi.string().required(),
+  date: Joi.string().required(),
+  expenseRefNo: Joi.string().required(),
+  particulars: Joi.string().required(),
   Amount: Joi.number().min(0).required(),
-  // createdBy: Joi.string(),
+  createdBy: Joi.string(),
 });
 
 const expenseValidationUpdateSchema = Joi.object({
@@ -18,7 +18,7 @@ const expenseValidationUpdateSchema = Joi.object({
   date: Joi.string().required(),
   expenseRefNo: Joi.string().required(),
   particulars: Joi.string().required(),
-  amount: Joi.number().min(0).required(),
+  Amount: Joi.number().min(0).required(),
   createdBy: Joi.string(),
 });
 
@@ -90,7 +90,11 @@ async function getAllExpenses(req, res) {
       {
         $project : {
           expenseType: 1,
-          amount: 1,
+          date: 1,
+          expenseRefNo: 1,
+          particulars: 1,
+          Amount: 1,
+          createdBy: 1,
         }
       },
       {
@@ -101,14 +105,12 @@ async function getAllExpenses(req, res) {
     ]
     const expenses = await Expense.aggregate(aggregate);
     const totalRecords = await Expense.countDocuments().exec();
+    console.log(totalRecords);
     res.json({
       data: expenses,
-      totalCount: totalRecords
+      totalCount: totalRecords,
+      expense: true
     })
-
-  .post('/', async function(req,res){
-    })
-
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: 'An error occurred while fetching expenses.' });
